@@ -1,0 +1,47 @@
+{
+    "compilerOptions": {
+        // ─── Language & Target ────────────────────────────────────────────────────
+        "target": "ES2022",
+        "lib": [
+            "ES2022"
+        ],
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        // ─── Strict Type Checking ─────────────────────────────────────────────────
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        "useUnknownInCatchVariables": true,
+        "alwaysStrict": true,
+        // ─── Additional Safety ────────────────────────────────────────────────────
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true,
+        // ─── Emit ─────────────────────────────────────────────────────────────────
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "removeComments": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        ".reports"
+    ]
+}
