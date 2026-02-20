@@ -1,13 +1,13 @@
 {
   "name": "library-system-tests",
   "version": "1.0.0",
-  "description": "A BDD test library to validate Login and Catalogu Page",
+  "description": "A BDD test library to validate DWP Login and Catalogue Page",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --publish-quiet",
-    "test:smoke": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --tags \"@smoke\" --format summary --publish-quiet",
-    "test:headed": "cross-env PLAYWRIGHT_HEADLESS=false NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --publish-quiet",
-    "test:parallel": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --parallel 4 --publish-quiet",
+    "test": "cross-env NODE_ENV=qa TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
+    "test:smoke": "cross-env NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --tags \"@smoke\" --format summary",
+    "test:headed": "cross-env PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
+    "test:parallel": "cross-env NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --parallel 4",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
     "report": "mkdir -p reports && npx multiple-cucumber-html-reporter --source reports/cucumber.json --target reports/cucumber-report --name \"Library System Test Report\" --displayDuration",
     "clean:reports": "npx rimraf reports/*"

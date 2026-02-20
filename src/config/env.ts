@@ -26,10 +26,6 @@ export interface EnvConfig {
     // Credentials
     readonly adminUsername: string;
     readonly adminPassword: string;
-    readonly standardUsername: string;
-    readonly standardPassword: string;
-    readonly readonlyUsername: string;
-    readonly readonlyPassword: string;
 
     // Timeouts (ms)
     readonly timeoutNavigation: number;
@@ -41,7 +37,6 @@ export interface EnvConfig {
 
 /**
  * Resolves and loads the correct .env.<environment> file from the project root.
- * Must be called before any process.env access.
  */
 function loadEnvFile(env: SupportedEnv): void {
     const envFilePath = path.resolve(process.cwd(), `.env.${env}`);
@@ -58,7 +53,6 @@ function loadEnvFile(env: SupportedEnv): void {
 
 /**
  * Reads a required string environment variable.
- * Throws immediately (fail-fast) if the variable is absent or empty.
  */
 function requireString(key: string): string {
     const value = process.env[key];
@@ -73,7 +67,6 @@ function requireString(key: string): string {
 
 /**
  * Reads a required integer environment variable.
- * Throws if the variable is absent, empty, or not a valid integer.
  */
 function requireInt(key: string): number {
     const raw = requireString(key);
@@ -118,7 +111,6 @@ function requireBrowser(key: string): EnvConfig['browser'] {
 
 /**
  * Resolves the target environment from TEST_ENV.
- * Falls back to "dev" if not set, but throws on an unrecognised value.
  */
 function resolveTargetEnv(): SupportedEnv {
     const raw = (process.env['TEST_ENV'] ?? 'dev').toLowerCase().trim();
@@ -133,35 +125,14 @@ function resolveTargetEnv(): SupportedEnv {
     );
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────────
 
-/**
- * Loads and validates the complete environment configuration.
- *
- * Execution order:
- *  1. Determine target environment from TEST_ENV.
- *  2. Load the corresponding .env.<environment> file.
- *  3. Validate and coerce every variable — fail-fast on the first missing value.
- *  4. Return a frozen, typed EnvConfig object.
- *
- * This function is intentionally NOT memoised here — the singleton pattern
- * lives in the Cucumber World so that parallel workers each own their config.
- *
- * @throws {Error} On any missing required variable or invalid value.
- */
 export function loadEnvConfig(): EnvConfig {
-    // Step 1: resolve env name (uses TEST_ENV already in process.env if set externally
-    //         e.g. via cross-env in an npm script before .env is loaded)
     const testEnv = resolveTargetEnv();
 
-    // Step 2: load .env.<env> — populates process.env for steps 3+
     loadEnvFile(testEnv);
 
-    // Step 3: re-resolve TEST_ENV now that the file is loaded (file value wins if
-    //         the caller did not set it externally — consistency guard)
     const confirmedEnv = resolveTargetEnv();
 
-    // Step 4: validate and build the typed config
     const config: EnvConfig = {
         testEnv: confirmedEnv,
 
@@ -176,22 +147,14 @@ export function loadEnvConfig(): EnvConfig {
 
         adminUsername: requireString('ADMIN_USERNAME'),
         adminPassword: requireString('ADMIN_PASSWORD'),
-        standardUsername: requireString('STANDARD_USERNAME'),
-        standardPassword: requireString('STANDARD_PASSWORD'),
-        readonlyUsername: requireString('READONLY_USERNAME'),
-        readonlyPassword: requireString('READONLY_PASSWORD'),
 
         timeoutNavigation: requireInt('TIMEOUT_NAVIGATION'),
         timeoutElement: requireInt('TIMEOUT_ELEMENT'),
         timeoutApi: requireInt('TIMEOUT_API'),
     };
 
-    // Step 5: freeze — prevents accidental mutation inside step definitions
     return Object.freeze(config);
 }
 
-/**
- * Convenience re-export. Consumers should call this only once (in World/Before hook)
- * and pass the result down. Avoids repeated file-system hits.
- */
+
 export type { EnvConfig as Config };
