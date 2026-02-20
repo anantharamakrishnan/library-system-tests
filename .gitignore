@@ -1,3 +1,26 @@
+node_modules/
+dist/
+coverage/
+reports/
+.env
+.DS_Store
+.idea/
+.vscode/
+.nyc_output/
+*.log
+.cache/
+playwright-report/
+reports/
+
+# TypeScript
+*.tsbuildinfo
+
+# Mac
+.AppleDouble
+._*
+
+# Optional: local npm debug
+npm-debug.log*
 # Dependencies
 node_modules/
 
@@ -14,8 +37,15 @@ playwright-report/
 # /Users/*/Library/Caches/ms-playwright/
 
 # Environment variable files — never commit secrets
+# Real .env.* files (dev/qa/prod) contain credentials; inject via CI vault.
+# Only .env.example is safe to track.
 .env
-.env.*
+.env.dev
+.env.qa
+.env.prod
+.env.local
+.env.staging
+.env.uat
 !.env.example
 
 # macOS
