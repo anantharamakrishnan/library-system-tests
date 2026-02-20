@@ -7,6 +7,7 @@
     "test": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --publish-quiet",
     "test:smoke": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --tags \"@smoke\" --format summary --publish-quiet",
     "test:headed": "cross-env PLAYWRIGHT_HEADLESS=false NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --publish-quiet",
+    "test:parallel": "cross-env NODE_ENV=test npx cucumber-js --require-module ./src/config/ts-node-register.js --require 'src/**/*.ts' --format progress --parallel 4 --publish-quiet",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
     "report": "mkdir -p reports && npx multiple-cucumber-html-reporter --source reports/cucumber.json --target reports/cucumber-report --name \"Library System Test Report\" --displayDuration",
     "clean:reports": "npx rimraf reports/*"

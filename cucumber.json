@@ -4,6 +4,7 @@
     "require": ["src/**/*.ts", "src/config/cucumber.ts"],
     "publishQuiet": true,
     "format": ["progress"],
-    "failFast": false
+    "failFast": false,
+    "parallel": 4
   }
 }
