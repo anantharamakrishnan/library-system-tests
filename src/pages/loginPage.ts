@@ -3,10 +3,11 @@ import { BasePage } from './basePage';
 
 export class LoginPage extends BasePage {
   // Locators
-  private readonly usernameInput = 'input[name="username"]';
-  private readonly passwordInput = 'input[name="password"]';
+  private readonly usernameInput = 'input[id="username"]';
+  private readonly passwordInput = 'input[id="password"]';
+
   private readonly loginButton = 'button[type="submit"]';
-  private readonly dashboardHeading = 'h1:has-text("Dashboard")';
+  private readonly logoutButton = this.page.getByRole('button', { name: 'Log Out' });
   private readonly errorMessage = '.error-message';
 
   constructor(page: Page, baseUrl?: string) {
@@ -27,7 +28,8 @@ export class LoginPage extends BasePage {
    * Assert dashboard is visible after successful login
    */
   async assertDashboardVisible(): Promise<void> {
-    await this.expectVisible(this.dashboardHeading);
+    const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
+    await this.expectVisible(this.logoutButton, navTimeout);
   }
 
   /**

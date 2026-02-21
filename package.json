@@ -4,10 +4,10 @@
   "description": "A BDD test library to validate DWP Login and Catalogue Page",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=qa TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
-    "test:smoke": "cross-env NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --tags \"@smoke\" --format summary",
-    "test:headed": "cross-env PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
-    "test:parallel": "cross-env NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --parallel 4",
+    "test": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
+    "test:smoke": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --tags \"@smoke\" --format summary",
+    "test:headed": "cross-env TEST_ENV=qa PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
+    "test:parallel": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --parallel 4",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
     "report": "mkdir -p reports && npx multiple-cucumber-html-reporter --source reports/cucumber.json --target reports/cucumber-report --name \"Library System Test Report\" --displayDuration",
     "clean:reports": "npx rimraf reports/*"

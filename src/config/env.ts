@@ -113,7 +113,7 @@ function requireBrowser(key: string): EnvConfig['browser'] {
  * Resolves the target environment from TEST_ENV.
  */
 function resolveTargetEnv(): SupportedEnv {
-    const raw = (process.env['TEST_ENV'] ?? 'dev').toLowerCase().trim();
+    const raw = (process.env['TEST_ENV'] ?? 'qa').toLowerCase().trim();
 
     if ((SUPPORTED_ENVS as ReadonlyArray<string>).includes(raw)) {
         return raw as SupportedEnv;

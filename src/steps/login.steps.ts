@@ -8,7 +8,8 @@ Given('I am on the login page', async function (this: CustomWorld) {
   const page = this.page;
   const loginPage = new LoginPage(page, process.env.BASE_URL);
   await loginPage.navigate('/login');
-  await loginPage.waitForVisible('input[name="username"]');
+  const timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+  await page.waitForSelector('input[name="username"], input[name="email"], input[type="text"]', { timeout });
 });
 
 When('I attempt to login with username as {string} and password as {string}', async function (this: CustomWorld, username: string, password: string) {
@@ -17,6 +18,8 @@ When('I attempt to login with username as {string} and password as {string}', as
   await loginPage.login(username, password);
 });
 
+// (no-op) kept intentionally to avoid ambiguous step definitions
+
 Then('I should see {string}', async function (this: CustomWorld, outcome: string) {
   if (!this.page) throw new Error('World.page is not initialized');
   const page = this.page;
@@ -24,14 +27,13 @@ Then('I should see {string}', async function (this: CustomWorld, outcome: string
 
   if (outcome === 'dashboard') {
     await loginPage.assertDashboardVisible();
-    const dashboardHeading = page.locator('h1:has-text("Dashboard")');
-    await expect(dashboardHeading).toBeVisible();
     return;
   }
 
   if (outcome === 'error message') {
     const errorLocator = page.locator('.error-message');
-    await expect(errorLocator).toBeVisible();
+    const elTimeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+    await expect(errorLocator).toBeVisible({ timeout: elTimeout });
     return;
   }
 

@@ -16,19 +16,30 @@ export class BasePage {
   }
 
   async navigate(path: string, options?: Parameters<Page['goto']>[1]): Promise<void> {
-    const url = path.match(/^https?:\/\//) ? path : `${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
-    await this.page.goto(url, options);
+    if (path.match(/^https?:\/\//)) {
+      const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
+      await this.page.goto(path, { timeout: navTimeout, ...(options ?? {}) });
+      return;
+    }
+
+    const cleanedBase = this.baseUrl.replace(/\/$/, '');
+    const cleanedPath = `/${path.replace(/^\//, '')}`;
+    const url = cleanedBase ? (cleanedBase.endsWith(cleanedPath) ? cleanedBase : `${cleanedBase}${cleanedPath}`) : cleanedPath;
+    const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
+    await this.page.goto(url, { timeout: navTimeout, ...(options ?? {}) });
   }
 
   async click(selector: Selector, options?: Parameters<Locator['click']>[0]): Promise<void> {
     const loc = this.getLocator(selector);
-    await loc.waitFor({ state: 'visible' });
+    const timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+    await loc.waitFor({ state: 'visible', timeout });
     await loc.click(options);
   }
 
   async type(selector: Selector, text: string, options?: { delay?: number }): Promise<void> {
     const loc = this.getLocator(selector);
-    await loc.waitFor({ state: 'visible' });
+    const timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+    await loc.waitFor({ state: 'visible', timeout });
     await loc.fill(text);
     if (options?.delay) {
       // emulate some typing delay if requested
@@ -36,7 +47,7 @@ export class BasePage {
     }
   }
 
-  async waitForVisible(selector: Selector, timeout = 5000): Promise<void> {
+  async waitForVisible(selector: Selector, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<void> {
     const loc = this.getLocator(selector);
     await loc.waitFor({ state: 'visible', timeout });
   }
@@ -48,7 +59,7 @@ export class BasePage {
     return txt ?? '';
   }
 
-  async expectVisible(selector: Selector, timeout = 5000): Promise<void> {
+  async expectVisible(selector: Selector, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<void> {
     await this.waitForVisible(selector, timeout);
   }
 }

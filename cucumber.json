@@ -5,6 +5,6 @@
     "publishQuiet": true,
     "format": ["progress"],
     "failFast": false,
-    "parallel": 4
+    "parallel": 1
   }
 }
