@@ -6,7 +6,7 @@
   "scripts": {
     "test": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress",
     "test:smoke": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --tags \"@smoke\" --format summary",
-    "test:headed": "cross-env TEST_ENV=qa PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke and not @ignore\" --require 'src/**/*.ts' --format progress",
+    "test:headed": "cross-env TEST_ENV=qa PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@catalogue and not @ignore\" --require 'src/**/*.ts' --format progress",
     "test:parallel": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --parallel 4",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
     "report": "mkdir -p reports && npx multiple-cucumber-html-reporter --source reports/cucumber.json --target reports/cucumber-report --name \"Library System Test Report\" --displayDuration",

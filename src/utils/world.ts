@@ -47,6 +47,7 @@ class CustomWorld extends World {
   page?: Page;
   apiClient?: ApiClient;
   testData: TestData = {};
+  scenarioContext: Record<string, any> = {};
 
   constructor(options: IWorldOptions) {
     super(options);

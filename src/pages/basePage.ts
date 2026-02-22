@@ -75,6 +75,15 @@ export class BasePage {
     }
   }
 
+  async clickButtonByName(buttonName: string, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<void> {
+    	await this.page.getByRole('button', { name: buttonName }).waitFor({ state: 'visible', timeout });
+    	await this.page.getByRole('button', { name: buttonName }).click();
+  }
+
+  async assertButtonByName(buttonName: string, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<void> {
+    	await this.page.getByRole('button', { name: buttonName }).waitFor({ state: 'visible', timeout });
+  }
+
 }
 
 export default BasePage;

@@ -73,3 +73,15 @@ Then('user should see {string} with {string}', async function (this: CustomWorld
   const body = page.locator('body');
   await expect(body).toContainText(outcome);
 });
+
+
+Then('admin should be on the login page', async function (this: CustomWorld) {
+  if (!this.page) throw new Error('World.page is not initialized');
+  const loginPage = new LoginPage(this.page, process.env.BASE_URL);
+  await loginPage.assertLoginPageVisible(); 
+});
+
+When ('admin refreshes the page', async function (this: CustomWorld) {
+  if (!this.page) throw new Error('World.page is not initialized');
+  await this.page.reload();
+});

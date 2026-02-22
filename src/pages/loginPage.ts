@@ -22,6 +22,16 @@ export class LoginPage extends BasePage {
   }
 
   /**
+   * Verify login page is visible by checking the presence of username and password fields
+   */
+  async assertLoginPageVisible(): Promise<void> {
+    const timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+    await this.expectVisible(this.usernameInput, timeout);
+    await this.expectVisible(this.passwordInput, timeout);
+  }     
+
+   
+  /**
    * Perform login with provided credentials
    */
   async login(username: string, password: string): Promise<void> {
