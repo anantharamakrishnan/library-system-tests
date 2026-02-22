@@ -1,4 +1,4 @@
-import type { Page } from 'playwright';
+import type { Page, } from 'playwright';
 import { BasePage } from './basePage';
 
 export class LoginPage extends BasePage {
@@ -7,8 +7,15 @@ export class LoginPage extends BasePage {
   private readonly passwordInput = 'input[id="password"]';
 
   private readonly loginButton = 'button[type="submit"]';
-  private readonly logoutButton = this.page.getByRole('button', { name: 'Log Out' });
-  private readonly errorMessage = '.error-message';
+  private readonly errorMessageUsername = 'div[aria-labelledby="login-heading"] p[id="username-error"]';
+  private readonly errorMessagePassword = 'div[aria-labelledby="login-heading"] p[id="password-error"]';
+
+  private readonly errorMessageTitle = 'div[role="alert"][aria-live="assertive"] h3';
+  private readonly errorMessageContent = 'div[role="alert"][aria-live="assertive"] li';
+
+  private readonly passwordToggleButton = 'button[aria-controls="password"]';
+  private readonly showPasswordToggle = 'button[aria-label="Show password"]';
+  private readonly hidePasswordToggle = 'button[aria-label="Hide password"]';
 
   constructor(page: Page, baseUrl?: string) {
     super(page, baseUrl);
@@ -25,19 +32,61 @@ export class LoginPage extends BasePage {
   }
 
   /**
-   * Assert dashboard is visible after successful login
+   * Get error message text if login fails
    */
-  async assertDashboardVisible(): Promise<void> {
-    const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
-    await this.expectVisible(this.logoutButton, navTimeout);
+  async getinlineErrorMessage(inlineField: string): Promise<string> {
+    if (inlineField === "username") {
+      return this.getText(this.errorMessageUsername);
+    } else if (inlineField === "password") {
+      return this.getText(this.errorMessagePassword);
+    }
+    throw new Error(`Unknown inline field: ${inlineField}`);
   }
 
   /**
-   * Get error message text if login fails
+   * Assert error message is visible on login page
    */
-  async getErrorMessage(): Promise<string> {
-    return this.getText(this.errorMessage);
+  async assertLoginErrorMessage(expectedMessage: string): Promise<void> {
+    const timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000');
+
+    const titleOk = await this.assertText(this.errorMessageTitle, 'There is a problem with your submission', timeout);
+      if (!titleOk) throw new Error(`Expected error title not found: "There is a problem with your submission"`);
+
+    const ok = await this.assertText(this.errorMessageContent, expectedMessage, timeout);
+    if (!ok) throw new Error(`Expected error message not found: "${expectedMessage}"`);
   }
+
+
+  /**
+   * Verify that the password visibility toggle button exists on the login page
+   */
+  async verifyPasswordToggleButtonExists(): Promise<void> {
+    const toggleButton = this.page.locator(this.passwordToggleButton);
+    await toggleButton.waitFor({ state: 'visible', timeout: Number(process.env.TIMEOUT_ELEMENT ?? '5000') });
+  }
+
+  /**
+   * Click the toggle password visibility button to show or hide the password
+   */
+  async clickPasswordToggle(action: string): Promise<void> {
+    if (action === "show") {
+      await this.click(this.showPasswordToggle);
+    } else if (action === "hide") {
+      await this.click(this.hidePasswordToggle);
+    }
+  }
+
+  /**
+   * Assert that the password field is masked or unmasked
+   */
+  async assertPasswordIsMasked(isMasked: boolean): Promise<void> {
+    const passwordInput = this.page.locator(this.passwordInput);
+    const isMaskedValue = await passwordInput.getAttribute('type') === 'password';
+    if (isMasked !== isMaskedValue) {
+      throw new Error(`Expected password to be ${isMasked ? 'masked' : 'unmasked'}, but it was ${isMaskedValue ? 'masked' : 'unmasked'}`);
+    }
+  }
+
 }
 
 export default LoginPage;

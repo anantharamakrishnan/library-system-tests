@@ -8,9 +8,25 @@ export class CataloguePage extends BasePage {
   private readonly productItem = '.product-item';
   private readonly productTitle = '.product-title';
   private readonly productSelectButton = '.select-product';
+  private readonly logoutButton = this.page.getByRole('button', { name: 'Log Out' });
 
   constructor(page: Page, baseUrl?: string) {
     super(page, baseUrl);
+  }
+
+    /**
+   * Assert catalogue is visible after successful login
+   */
+  async assertCatalogueVisible(): Promise<void> {
+    const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
+    await this.expectVisible(this.logoutButton, navTimeout);
+    // Also check for dashboard welcome text
+    const body = this.page.locator('body');
+    await body.waitFor({ state: 'visible', timeout: navTimeout });
+    const bodyText = await body.textContent();
+    if (!bodyText || !bodyText.includes('Welcome, Admin!')) {
+      throw new Error('Dashboard welcome text not found');
+    }
   }
 
   /**

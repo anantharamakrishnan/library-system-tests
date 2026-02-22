@@ -19,6 +19,7 @@ export class BasePage {
     if (path.match(/^https?:\/\//)) {
       const navTimeout = Number(process.env.TIMEOUT_NAVIGATION ?? '60000');
       await this.page.goto(path, { timeout: navTimeout, ...(options ?? {}) });
+        await this.page.waitForSelector('input[name="username"], input[name="email"], input[type="text"]', { timeout: navTimeout });
       return;
     }
 
@@ -62,6 +63,18 @@ export class BasePage {
   async expectVisible(selector: Selector, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<void> {
     await this.waitForVisible(selector, timeout);
   }
+
+  async assertText(selector: Selector, expected: string, timeout = Number(process.env.TIMEOUT_ELEMENT ?? '5000')): Promise<boolean> {
+    try {
+      const loc = typeof selector === 'string' ? this.page.locator(selector) : selector;
+      await loc.waitFor({ state: 'visible', timeout });
+      const txt = await loc.textContent();
+      return txt !== null && txt.includes(expected);
+    } catch {
+      return false;
+    }
+  }
+
 }
 
 export default BasePage;
