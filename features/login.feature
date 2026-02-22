@@ -1,5 +1,5 @@
 # language: en
-@smoke @regression
+ @regression
 Feature: Login
     As a registered user
     I want to log into the application
@@ -13,6 +13,7 @@ Feature: Login
   Background:
     Given user navigates to the login page
 
+ @functional @smoke
   Scenario Outline: Login attempts with different test users
     When user logs in with "<username>" and "<password>"
     Then user should see "<outcome>" with "<expMessage>"
@@ -25,6 +26,7 @@ Feature: Login
       | invalidUser   |   | password error     | Please enter your password |
 
 
+@functional  @smoke
 Scenario: Show button to toggle password visibility
     Then user should see a button to toggle password visibility
     When user click the toggle password visibility button to "show"
@@ -33,3 +35,7 @@ Scenario: Show button to toggle password visibility
     Then the password input should switch to "masked" state
 
 
+@regression @performance @ignore
+  Scenario: Login response time should be under acceptable threshold
+    When user logs in with valid credentials
+    Then login response time should be less than 3 seconds

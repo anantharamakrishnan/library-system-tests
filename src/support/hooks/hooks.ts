@@ -11,7 +11,7 @@ let globalBrowser: Browser | undefined;
 
 BeforeAll(async () => {
   log.info('BeforeAll: launching Playwright browser', { headless: HEADLESS });
-  globalBrowser = await chromium.launch({ headless: HEADLESS });
+  globalBrowser = await chromium.launch({ headless: HEADLESS, args: ['--start-maximized'] });
   log.info('Browser launched');
 });
 
@@ -22,7 +22,9 @@ Before(async function (this: CustomWorld) {
     throw new Error('Playwright browser was not initialized in BeforeAll');
   }
   this.browser = globalBrowser;
-  await this.newContext();
+  await this.newContext({
+  viewport: null  // 👈 ensures actual window size
+});
   log.debug('Before: browser context and page created');
 });
 
