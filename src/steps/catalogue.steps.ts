@@ -1,5 +1,6 @@
 import { Given, When, Then, DataTable } from '@cucumber/cucumber';
 import type { CustomWorld } from '../utils/world';
+import { getRandomPrice, getRandomDate, getRandomAuthor, getRandomTitle, getRandomGenre } from '../utils/random';
 import CataloguePage from '../pages/cataloguePage';
 import AddBookPage from '../pages/addBookPage';
 import EditBookPage from '../pages/editBookPage';
@@ -66,15 +67,12 @@ async function fillAndSubmitRandomBook(this: CustomWorld): Promise<void> {
   if (!this.page) throw new Error('World.page is not initialized');
 
   const addBookPage = new AddBookPage(this.page, process.env.BASE_URL);
-
-  const genres = ['Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery', 'Fantasy', 'Biography'];
-
   this.scenarioContext = this.scenarioContext || {};
 
   const randomBook = {
     title: getRandomTitle(),
     author: getRandomAuthor(),
-    genre: genres[Math.floor(Math.random() * genres.length)],
+    genre: getRandomGenre(),
     isbn: '1234567890',
     publicationDate: getRandomDate(),
     price: getRandomPrice(),
@@ -145,16 +143,24 @@ When('admin edits the book details and submits the form', async function (this: 
     if (!this.page) throw new Error('World.page is not initialized');
 	const editBookPage = new EditBookPage(this.page, process.env.BASE_URL);
 
-    const newBookData = dataTable.hashes();
-	await editBookPage.fillBookDetails({
-    title: newBookData[0]['newTitle'],
-    author: newBookData[0]['newAuthor'],
-    genre: newBookData[0]['newGenre'],
-    isbn: newBookData[0]['newISBN'],
-    publicationDate: newBookData[0]['newPublicationDate'],
-    price: newBookData[0]['newPrice'],
-	});
+    const [newBookData] = dataTable.hashes();
+
+    const editBookDetails = {
+        title: newBookData['newTitle'],   
+        author: newBookData['newAuthor'],
+        genre: newBookData['newGenre'],
+        isbn: newBookData['newISBN'],
+        publicationDate: newBookData['newPublicationDate'],
+        price: newBookData['newPrice']
+    };
+
+    this.scenarioContext = this.scenarioContext || {};
+    this.scenarioContext.editedBook = editBookDetails;
     
+	await editBookPage.fillBookDetails({
+   ...editBookDetails});
+
+
 });
 
 When('admin should be able to verify the new book details', async function (this: CustomWorld,  dataTable: DataTable) {
@@ -199,36 +205,3 @@ When('admin validates pagination state {string} for the count of {string} books'
     await cataloguePage.assertPaginationState(paginationState as 'enabled' | 'disabled');
 
 });
-
-// Random Functions
-function getRandomPrice(min = 10, max = 100): string {
-  // Random float with 2 decimal points
-  return (Math.random() * (max - min) + min).toFixed(2);
-}
-
-function getRandomDate(startYear = 2000, endYear = 2024): string {
-  const year = Math.floor(Math.random() * (endYear - startYear + 1)) + startYear;
-  const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-  const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0'); // avoid invalid dates
-  return `${year}-${month}-${day}`;
-}
-
-function getRandomText(length: number): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  while (result.length < length) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return result;
-}
-
-function getRandomAuthor(): string {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-  return `Tester ${randomLetter}`;
-}
-
-function getRandomTitle(): string {
-  const maxRandomLength = 21 - 4; // 4 chars for "dwp" and a space
-  return `dwp${getRandomText(maxRandomLength)}`;
-}

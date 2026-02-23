@@ -60,18 +60,95 @@ export class EditBookPage extends BasePage {
     price?: string;
   }): Promise<void> {
 
-        console.log('New book data from DataTable:', details.publicationDate);
+      const titleInput = this.page.locator('input[name="title"]');
+      await titleInput.clear();
+      await titleInput.fill(details.title || "");
+    
+    await this.page.fill('input[name="title"]', details.title || "" );
 
-    if (details.title) await this.page.fill('input[name="title"]', details.title);
-    if (details.author) await this.page.fill('input[name="author"]', details.author);
-    if (details.genre) await this.page.fill('input[name="genre"]', details.genre);
-    if (details.isbn) await this.page.fill('input[name="isbn"]', details.isbn);
-    if (details.publicationDate) await this.page.fill('input[name="publicationDate"]', details.publicationDate.split("/").reverse().join("-"));
-    if (details.price) await this.page.fill('input[name="price"]', details.price);
+    await this.page.fill('input[name="author"]', details.author || "");
+    await this.page.fill('input[name="genre"]', details.genre || "");
+    
+    await this.page.fill('input[name="isbn"]', details.isbn || "");
+    await this.page.fill('input[name="publicationDate"]', details.publicationDate?.split("/").reverse().join("-") || "");
+     await this.page.fill('input[name="price"]', details.price || "");
 
     await this.submitButton.click();
+
   }
 
+getExpectedValidationError(book: {
+  title?: string;
+  author?: string;
+  genre?: string;
+  isbn?: string;
+  publicationDate?: string;
+  price?: string;
+}): { field: string | null; message: string | null } {
+
+    console.log('Book details for validation error:', book);
+
+  if (!book.title?.trim())
+    return { field: "Title", message: "Title is required." };
+
+  if (!book.author?.trim())
+    return { field: "Author", message: "Author is required." };
+
+  if (!book.genre?.trim())
+    return { field: "Genre", message: "Genre is required." };
+
+  if (!book.isbn?.trim())
+    return { field: "ISBN", message: "ISBN is required." };
+
+  if (!book.publicationDate?.trim())
+    return { field: "Publication Date", message: "Publication date is required." };
+
+  if (!book.price?.trim())
+    return { field: "Price", message: "Price is required." };
+
+  return { field: null, message: null };
+}
+
+async assertValidationError(bookDetails: {
+  title?: string;
+  author?: string;
+  genre?: string;
+  isbn?: string;
+  publicationDate?: string;
+  price?: string;
+}): Promise<void> {
+
+  const expectedError = this.getExpectedValidationError(bookDetails);
+  console.log(`Expected Priority validation error: ${expectedError.field} - ${expectedError.message}`);
+  let message: string | null = null;
+
+  switch(expectedError.field) {
+    case "Title":
+      message = await this.page.locator('input[name="title"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    case "Author":
+      message = await this.page.locator('input[name="author"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    case "Genre":
+      message = await this.page.locator('input[name="genre"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    case "ISBN":
+      message = await this.page.locator('input[name="isbn"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    case "Publication Date":
+      message = await this.page.locator('input[name="publicationDate"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    case "Price":
+      message = await this.page.locator('input[name="price"]').evaluate((element: HTMLInputElement) => element.validationMessage);
+      break;
+    default:
+      message = null;
+      throw new Error("No validation error found but expected one.");
+
+  }
+      expect(message).toBe('Please fill in this field.');
+
+}
 
 }
 

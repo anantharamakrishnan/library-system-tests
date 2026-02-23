@@ -98,3 +98,8 @@ Scenario Outline: Admin is able to verify the pagination button are <paginationS
    |scenarioName|paginationState|bookCount|
    |lessThan6Books|disabled|5|
    |moreThan6Books|enabled|7|
+
+@ignore @failure @create-bug @wip
+Scenario: Admin verfied the invalid date details are stored in the catelogue
+    When admin adds a new book with the date as '0001-01-01'
+    Then admin should be able to view the new book in the catalog with the date as '01/01/0001'
