@@ -17,7 +17,7 @@ Background:
     |Book Title|Author|Genre|ISBN|Publication Date|
     |Charlotte's Web|E.B. White|Children's Fiction|||
 
-@smoke @functional
+@smoke @functional 
 Scenario Outline: Admin navigates to Edit New Book page and validated Form entry
     When admin edits the book details and submits the form
     |newTitle|newAuthor|newGenre|newISBN|newPublicationDate|newPrice|
@@ -27,9 +27,10 @@ Scenario Outline: Admin navigates to Edit New Book page and validated Form entry
     Examples:
     |scenarioName|bookTitle|bookAuthor|bookGenre|bookIsbn|bookPublicationDate|bookPrice|expectedError|
     |allFieldsBlank| | | | | | |PRIORITY_LOGIC_ERROR|
-   |FewFieldsBlank|Atomic Habits | | | | | |Author is required.|
-   |FewFieldsBlank|Atomic Habits |James Clear| | | | | ISBN is required.|
-   |FewFieldsBlank|Atomic Habits |James Clear| |978-0-735-21129-2 | | |Price is required. |
-   |FewFieldsBlank|Atomic Habits |James Clear| |978-0-735-21129-2 | |44|Publication Date is required. |
-   |FewFieldsBlank|Atomic Habits |James Clear|Fiction |978-0-735-21129-2 | |44| Genre is required.|
+   |FewFieldsBlank|Atomic Habits | | | | | |PRIORITY_LOGIC_ERROR|
+   |FewFieldsBlank|Atomic Habits |James Clear| | | | | PRIORITY_LOGIC_ERROR|
+    |FewFieldsBlank|Atomic Habits |James Clear|Fiction| | |44|PRIORITY_LOGIC_ERROR|
+   |FewFieldsBlank|Atomic Habits |James Clear|Fiction |978-0-735-21129-2 | | |PRIORITY_LOGIC_ERROR |
+   |FewFieldsBlank|Atomic Habits |James Clear|Fiction |978-0-735-21129-2 |1999-09-01||PRIORITY_LOGIC_ERROR |
+   |FewFieldsBlank|Atomic Habits |James Clear|Fiction |978-0-735-21129-2 | |44|PRIORITY_LOGIC_ERROR |
    |allFieldsBlank|harry potter and the prisoner of azkaban |JK.rowling|Fiction | 3243242342323|1999-09-10 |10 | Title cannot exceed 20 characters.|

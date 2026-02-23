@@ -1,4 +1,4 @@
-import type { Page } from 'playwright';
+import type { Locator, Page } from 'playwright';
 import { BasePage } from './basePage';
 import { expect } from '@playwright/test';
 
@@ -74,6 +74,7 @@ export class EditBookPage extends BasePage {
      await this.page.fill('input[name="price"]', details.price || "");
 
     await this.submitButton.click();
+    await this.page.waitForTimeout(1000);
 
   }
 
@@ -84,9 +85,8 @@ getExpectedValidationError(book: {
   isbn?: string;
   publicationDate?: string;
   price?: string;
-}): { field: string | null; message: string | null } {
+}): { field: string ; message: string } | null {
 
-    console.log('Book details for validation error:', book);
 
   if (!book.title?.trim())
     return { field: "Title", message: "Title is required." };
@@ -101,12 +101,12 @@ getExpectedValidationError(book: {
     return { field: "ISBN", message: "ISBN is required." };
 
   if (!book.publicationDate?.trim())
-    return { field: "Publication Date", message: "Publication date is required." };
+    return { field: "PublicationDate", message: "Publication date is required." };
 
   if (!book.price?.trim())
     return { field: "Price", message: "Price is required." };
 
-  return { field: null, message: null };
+return null; // In case No validation errors matched
 }
 
 async assertValidationError(bookDetails: {
@@ -119,35 +119,44 @@ async assertValidationError(bookDetails: {
 }): Promise<void> {
 
   const expectedError = this.getExpectedValidationError(bookDetails);
+
+  if (!expectedError)
+    throw new Error("Expected validation error but none found.");
+
+  // Map field name to locator dynamically
+  const fieldMap: Record<string, string> = {
+    Title: 'input[name="title"]',
+    Author: 'input[name="author"]',
+    Genre: 'input[name="genre"]',
+    ISBN: 'input[name="isbn"]',
+    PublicationDate: 'input[name="publicationDate"]',
+    Price: 'input[name="price"]'
+  };
+
+  const selector = fieldMap[expectedError.field];
+
+  if (!selector)
+    throw new Error(`No locator mapping found for ${expectedError.field}`);
+
   console.log(`Expected Priority validation error: ${expectedError.field} - ${expectedError.message}`);
-  let message: string | null = null;
+  const locator = this.page.locator(selector);
 
-  switch(expectedError.field) {
-    case "Title":
-      message = await this.page.locator('input[name="title"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    case "Author":
-      message = await this.page.locator('input[name="author"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    case "Genre":
-      message = await this.page.locator('input[name="genre"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    case "ISBN":
-      message = await this.page.locator('input[name="isbn"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    case "Publication Date":
-      message = await this.page.locator('input[name="publicationDate"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    case "Price":
-      message = await this.page.locator('input[name="price"]').evaluate((element: HTMLInputElement) => element.validationMessage);
-      break;
-    default:
-      message = null;
-      throw new Error("No validation error found but expected one.");
+    await this.assertFieldInvalid(locator);
+    const message = await locator.evaluate(el => (el as HTMLInputElement).validationMessage);
 
-  }
-      expect(message).toBe('Please fill in this field.');
+    expect([
+      'Please fill in this field.',
+      'Please fill out this field.'
+    ]).toContain(message);
 
+}
+
+async assertFieldInvalid(locator: Locator) {
+  const isValid = await locator.evaluate(
+    el => (el as HTMLInputElement).checkValidity()
+  );
+
+  expect(isValid).toBe(false);
 }
 
 }

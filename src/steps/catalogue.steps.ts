@@ -89,8 +89,8 @@ Then('admin should be able to view the new book in the catalog', async function 
     if (!this.page) throw new Error('World.page is not initialized');
     const cataloguePage = new CataloguePage(this.page, process.env.BASE_URL);
     this.scenarioContext = this.scenarioContext || {};
-    const existingCount = this.scenarioContext.existingBookCount + 1;
-    await cataloguePage.assertBookCount(existingCount);
+    const existingCount = this.scenarioContext.existingBookCount;
+    await cataloguePage.assertBookCount(existingCount+1);
     await cataloguePage.assertCatalogueForBook(existingCount, this.scenarioContext.addedBook);
 });
 
@@ -98,6 +98,15 @@ Given('admin is on the Book List page', async function (this: CustomWorld) {
     if (!this.page) throw new Error('World.page is not initialized');
 	const cataloguePage = new CataloguePage(this.page, process.env.BASE_URL);
 	await cataloguePage.assertCatalogueVisible();
+});
+
+Then('{string} and {string} buttons should be visible for each book entry', async function (this: CustomWorld, editButton: string, deleteButton: string) {
+    if (!this.page) throw new Error('World.page is not initialized');
+    const rows = await this.page.locator('table tbody tr').count();
+    for (let i = 0; i < rows; i++) {
+        await this.page.locator('table tbody tr').nth(i).getByRole('button', { name: editButton }).waitFor({ state: 'visible' });
+        await this.page.locator('table tbody tr').nth(i).getByRole('button', { name: deleteButton }).waitFor({ state: 'visible' });
+    }
 });
 
 When('admin clicks on {string} button for a book entry', async function (this: CustomWorld, buttonName: string, dataTable: DataTable) {
@@ -156,7 +165,7 @@ When('admin edits the book details and submits the form', async function (this: 
 
     this.scenarioContext = this.scenarioContext || {};
     this.scenarioContext.editedBook = editBookDetails;
-    
+
 	await editBookPage.fillBookDetails({
    ...editBookDetails});
 
@@ -169,16 +178,19 @@ When('admin should be able to verify the new book details', async function (this
     const cataloguePage = new CataloguePage(this.page, process.env.BASE_URL);
     this.scenarioContext = this.scenarioContext || {};
     
-    const newBookData = dataTable.hashes();
+    // Wait for navigation back to catalogue after edit form submit
+    await cataloguePage.assertCatalogueVisible();
+    
+    const [newBookData] = dataTable.hashes();
     console.log(`The indexed book value is ${this.scenarioContext.bookIndex}`);
 
     await cataloguePage.assertCatalogueForBook(this.scenarioContext.bookIndex,{
-    title: newBookData[0]['newTitle'],
-    author: newBookData[0]['newAuthor'],
-    genre: newBookData[0]['newGenre'],
-    isbn: newBookData[0]['newISBN'],
-    publicationDate: newBookData[0]['newPublicationDate'],
-    price: newBookData[0]['newPrice'],
+    title: newBookData['newTitle'],
+    author: newBookData['newAuthor'],
+    genre: newBookData['newGenre'],
+    isbn: newBookData['newISBN'],
+    publicationDate: newBookData['newPublicationDate'],
+    price: newBookData['newPrice'],
 	}); 
 });
 

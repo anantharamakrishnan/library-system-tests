@@ -238,6 +238,7 @@ async getBookDetailsByTitle(title: string): Promise<{
   async assertCatalogueForBook( newBookCounter: number,  book: { title: string; author: string;  genre:string, isbn?: string; publicationDate?: string; price?: string }): Promise<void> {
     let found = false;
       const row = this.page.locator('table tbody tr').nth(newBookCounter);
+
       // Title
       if (book.title) {
         await expect(row.locator('td').nth(0)).toHaveText(book.title, { timeout: 15000 });

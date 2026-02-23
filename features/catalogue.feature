@@ -53,23 +53,23 @@ Scenario: Admin edits an existing book
     |The Very Busy SpiderMan|Ben Parker|Comics|9780694005001|01/01/2026|50|
   
 @smoke @regression @functional
-Scenario Outline: Admin verifies the priceo of an edited book always appears in <scenarioName> decimal cases
+Scenario Outline: Admin verifies the price of an edited book always appears in <scenarioName> decimal cases
     When admin clicks on "Edit" button for a book entry
     |Book Title|Author|Genre|ISBN|Publication Date|
-    |Charlotte's Web|E.B. White|Children's Fiction|||
+    |The Very Busy Spider|Eric Carle|Picture Book|||
     When admin edits the book details and submits the form
     |newTitle|newAuthor|newGenre|newISBN|newPublicationDate|newPrice|
-    ||||||<newPrice>|
+    |The Very Busy Spider|Eric Carle|Picture Book|9780694005000|01/09/1984|<newPrice>|
     Then admin should be able to verify the new book details
     |newTitle|newAuthor|newGenre|newISBN|newPublicationDate|newPrice|
-    |Charlotte's Web|E.B. White|Children's Fiction|9780064400558|15/10/1952|<newPrice>|
+    |The Very Busy Spider|Eric Carle|Picture Book|9780694005000|01/09/1984|<newPrice>|
 
     Examples:
       |scenarioName|newPrice|
       |validPrice|50.00|
       |singleDecimal|50.0|
-      |noDecimal|50.|
       |wholeNumber|50.00|
+      |noDecimal|50.|
       |moreThanTwoDecimal|50.444|
 
 @smoke @regression @functional
