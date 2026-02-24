@@ -35,7 +35,7 @@ Scenario: Show button to toggle password visibility
     Then the password input should switch to "masked" state
 
 
-@regression @performance @ignore
+ @performance @ignore
   Scenario: Login response time should be under acceptable threshold
     When user logs in with valid credentials
     Then login response time should be less than 3 seconds

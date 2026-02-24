@@ -16,7 +16,7 @@ Background:
     Given user navigates to the login page
     When user logs in with "admin" and "admin"
 
-@smoke @regression @functional
+@smoke  @functional
 Scenario: Admin navigates to Book List page
     Then admin should be able to see the welcome message with Logout button
     Then "Add Book" button should be visible
@@ -25,7 +25,7 @@ Scenario: Admin navigates to Book List page
     And the Book List table should be visible
     And "Edit" and "Delete" buttons should be visible for each book entry
 
-@@smoke @regression @functional
+@@smoke  @functional
 Scenario: Admin adds a new book
     When admin clicks on "Add Book" button
     Then admin navigates to "Add New Book" page
@@ -40,7 +40,7 @@ Scenario: Admin verifies the book details in the edit page
     Then admin should verify the book details in the edit form
 
 
-@smoke @regression @functional
+@smoke  @functional
 Scenario: Admin edits an existing book
     When admin clicks on "Edit" button for a book entry
     |Book Title|Author|Genre|ISBN|Publication Date|
@@ -52,7 +52,7 @@ Scenario: Admin edits an existing book
     |newTitle|newAuthor|newGenre|newISBN|newPublicationDate|newPrice|
     |The Very Busy SpiderMan|Ben Parker|Comics|9780694005001|01/01/2026|50|
   
-@smoke @regression @functional
+@smoke  @functional
 Scenario Outline: Admin verifies the price of an edited book always appears in <scenarioName> decimal cases
     When admin clicks on "Edit" button for a book entry
     |Book Title|Author|Genre|ISBN|Publication Date|
@@ -72,7 +72,7 @@ Scenario Outline: Admin verifies the price of an edited book always appears in <
       |noDecimal|50.|
       |moreThanTwoDecimal|50.444|
 
-@smoke @regression @functional
+@smoke  @functional
 Scenario: Admin deletes a book
     When admin clicks on "Delete" button for a book entry
     |Book Title|Author|Genre|ISBN|Publication Date|
@@ -91,7 +91,7 @@ Scenario: Admin clicks Logout button
     Then admin should be on the login page
 
 
-@smoke @regression @functional 
+@smoke  @functional 
 Scenario Outline: Admin is able to verify the pagination button are <paginationState> for <scenarioName>
     When admin validates pagination state "<paginationState>" for the count of "<bookCount>" books
    Example:
