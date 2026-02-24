@@ -58,3 +58,6 @@ playwright-report/
 *.ntvs*
 *.njsproj
 *.sln
+
+allure-report/
+allure-results/

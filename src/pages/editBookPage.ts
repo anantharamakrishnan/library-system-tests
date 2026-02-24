@@ -46,7 +46,7 @@ export class EditBookPage extends BasePage {
     const formattedDate = details.publicationDate.split("/").reverse().join("-");
 
     await expect(this.page.locator('input[name="publicationDate"]')).toHaveValue(formattedDate);
-    console.log(`Expected price in edit form: ${details.price}`);
+    //console.log(`Expected price in edit form: ${details.price}`);
 
     await expect(this.page.locator('input[name="price"]')).toHaveValue(details.price.replace('£', ''));
   } 
@@ -138,7 +138,7 @@ async assertValidationError(bookDetails: {
   if (!selector)
     throw new Error(`No locator mapping found for ${expectedError.field}`);
 
-  console.log(`Expected Priority validation error: ${expectedError.field} - ${expectedError.message}`);
+  //console.log(`Expected Priority validation error: ${expectedError.field} - ${expectedError.message}`);
   const locator = this.page.locator(selector);
 
     await this.assertFieldInvalid(locator);

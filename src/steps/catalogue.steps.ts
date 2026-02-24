@@ -43,7 +43,7 @@ When('admin clicks on {string} button', async function (this: CustomWorld, butto
     
     // Store the existing book count before adding
     this.scenarioContext.existingBookCount = await cataloguePage.getTotalBooks();
-        console.log(`Existing book count: ${this.scenarioContext.existingBookCount}`);
+        //console.log(`Existing book count: ${this.scenarioContext.existingBookCount}`);
     
 	await cataloguePage.clickButtonByName(buttonName);
 });
@@ -182,7 +182,7 @@ When('admin should be able to verify the new book details', async function (this
     await cataloguePage.assertCatalogueVisible();
     
     const [newBookData] = dataTable.hashes();
-    console.log(`The indexed book value is ${this.scenarioContext.bookIndex}`);
+    //console.log(`The indexed book value is ${this.scenarioContext.bookIndex}`);
 
     await cataloguePage.assertCatalogueForBook(this.scenarioContext.bookIndex,{
     title: newBookData['newTitle'],

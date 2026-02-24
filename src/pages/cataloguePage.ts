@@ -114,9 +114,9 @@ export class CataloguePage extends BasePage {
       throw new Error('Row locator text content is null');
     }
     const totalBooks = parseInt(rowData.replace('Total Book Titles: ', '').trim(), 10);
-    console.log(`Total books from catalogue header: ${totalBooks}`);
+    //console.log(`Total books from catalogue header: ${totalBooks}`);
       const tableRowCount = await this.page.locator(this.catalogueTableRow).count();
-    console.log(`Total book rows in table: ${tableRowCount}`);
+    //console.log(`Total book rows in table: ${tableRowCount}`);
       if (totalBooks !== tableRowCount) {
         throw new Error(`Total books count ${totalBooks} does not match table row count ${tableRowCount}`);
       }
@@ -263,7 +263,7 @@ async getBookDetailsByTitle(title: string): Promise<{
       }
       // Price
       if (book.price) {
-        console.log(`Validating price: expected "${book.price}"`);
+        //console.log(`Validating price: expected "${book.price}"`);
         const formattedBookPrice = Number(book.price).toFixed(2);
 
         await expect(row.locator('td').nth(5)).toHaveText("£" + formattedBookPrice, { timeout: 15000 });

@@ -4,13 +4,16 @@
   "description": "A BDD test library to validate DWP Login and Catalogue Page",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke and not @ignore\" --require 'src/**/*.ts' --format progress",
-    "test:smoke": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --tags \"@smoke\" --format summary",
-    "test:headed": "cross-env TEST_ENV=qa PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke and not @ignore\" --require 'src/**/*.ts' --format progress",
-    "test:parallel": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --parallel 4",
+    "test": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke and not @ignore\" --require 'src/**/*.ts' --format progress --format allure-cucumberjs/reporter",
+    "test:smoke": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke\" --require 'src/**/*.ts' --format summary --format allure-cucumberjs/reporter",
+    "test:headed": "cross-env TEST_ENV=qa PLAYWRIGHT_HEADLESS=false NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --tags \"@smoke and not @ignore\" --require 'src/**/*.ts' --format progress --format allure-cucumberjs/reporter",
+    "test:parallel": "cross-env TEST_ENV=qa NODE_ENV=test TS_NODE_PROJECT=./tsconfig.json npx cucumber-js --require-module ts-node/register --require 'src/**/*.ts' --format progress --format allure-cucumberjs/reporter --parallel 4",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
-    "report": "mkdir -p reports && npx multiple-cucumber-html-reporter --source reports/cucumber.json --target reports/cucumber-report --name \"Library System Test Report\" --displayDuration",
-    "clean:reports": "npx rimraf reports/*"
+    "allure:clean": "rm -rf allure-results allure-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "report": "npm run allure:clean && npm run test && npm run allure:generate && npm run allure:open",
+    "clean:reports": "rm -rf allure-results allure-report"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +22,11 @@
     "@cucumber/cucumber": "^12.6.0",
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.3.0",
+    "allure-commandline": "^2.36.0",
+    "allure-cucumberjs": "^3.4.5",
     "cross-env": "^10.1.0",
     "dotenv": "^17.3.1",
+    "playwright": "^1.58.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

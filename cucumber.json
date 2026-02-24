@@ -3,8 +3,14 @@
     "paths": ["features/**/*.feature"],
     "require": ["src/**/*.ts", "src/config/cucumber.ts"],
     "publishQuiet": true,
-    "format": ["progress"],
     "failFast": false,
+    "format": [
+      "progress",
+      "allure-cucumberjs/reporter"
+    ],
+    "formatOptions": {
+      "resultsDir": "allure-results"
+    },
     "parallel": 1
   }
 }
